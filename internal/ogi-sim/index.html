@@ -1,1 +1,18 @@
-@/workspace/index_only.html
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta name="robots" content="noindex,nofollow"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>OGI Sim Ledger Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+</head><body>
+<p style="font:14px system-ui;color:#8b9bb4;background:#0f1419;margin:0;padding:16px">Loading OGI Sim…</p>
+<script>
+(async () => {
+  const t = await fetch('index.z.b64', {cache:'no-store'}).then(r => r.text());
+  const bin = Uint8Array.from(atob(t.trim()), c => c.charCodeAt(0));
+  const html = new TextDecoder('utf-8').decode(pako.inflate(bin));
+  document.open(); document.write(html); document.close();
+})().catch(e => { document.body.textContent = 'Load failed: ' + e; });
+</script>
+</body></html>
