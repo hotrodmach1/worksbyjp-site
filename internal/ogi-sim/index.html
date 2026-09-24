@@ -9,14 +9,22 @@
 <p style="font:14px system-ui;color:#8b9bb4;background:#0f1419;margin:0;padding:16px">Loading OGI Sim…</p>
 <script>
 (async () => {
-  const n = 4;
-  const parts = await Promise.all([...Array(n).keys()].map(i =>
-    fetch(new URL('data-' + String(i).padStart(2,'0') + '.json', location.href)).then(r => {
-      if (!r.ok) throw new Error('chunk ' + i + ' ' + r.status);
-      return r.text();
-    })
-  ));
-  const t = parts.map(s => s.trim()).join('');
+  let t;
+  try {
+    const r = await fetch(new URL('index.z.b64', location.href));
+    if (!r.ok) throw new Error('zb64 ' + r.status);
+    t = (await r.text()).trim();
+    if (t.length < 1000) throw new Error('zb64 too small');
+  } catch (e1) {
+    const n = 4;
+    const parts = await Promise.all([...Array(n).keys()].map(i =>
+      fetch(new URL('data-' + String(i).padStart(2,'0') + '.json', location.href)).then(r => {
+        if (!r.ok) throw new Error('chunk ' + i + ' ' + r.status);
+        return r.text();
+      })
+    ));
+    t = parts.map(s => s.trim()).join('');
+  }
   const bin = Uint8Array.from(atob(t), c => c.charCodeAt(0));
   const html = new TextDecoder('utf-8').decode(pako.inflate(bin));
   document.open(); document.write(html); document.close();
